@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SACHI - Small Bill (HTML Only)</title>
+
+  <style>
+    :root{
+      --bg:#0b1220; --bg2:#0f1a33;
+      --text:#e5e7eb; --muted:#9ca3af;
+      --line:rgba(255,255,255,.10);
+      --blue:#60a5fa; --green:#34d399; --red:#fb7185;
+      --shadow: 0 16px 40px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(96,165,250,.20), transparent 60%),
+        radial-gradient(900px 500px at 80% 0%, rgba(52,211,153,.16), transparent 55%),
+        radial-gradient(900px 500px at 50% 100%, rgba(251,113,133,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height:100vh;
+    }
+    .wrap{max-width:1100px;margin:14px auto;padding:0 12px}
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+    }
+    .cardHead .left{display:flex;flex-direction:column;gap:2px}
+    .cardHead .left b{font-size:14px}
+    .cardHead .left span{font-size:12px;color:var(--muted)}
+    .cardBody{padding:16px}
+
+    .header{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      margin-bottom:12px;padding:12px 14px;
+      border:1px solid var(--line);border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+    }
+    .brandBox{display:flex;align-items:center;gap:12px}
+    .brandBox img{width:110px;height:auto;filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));}
+    .brandText{display:flex;flex-direction:column;gap:2px}
+    .brandText h1{margin:0;font-size:22px;line-height:1.1;letter-spacing:.2px}
+    .brandText .sub{margin:0;color:var(--muted);font-size:12px;line-height:1.3}
+
+    .chipRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .chip{
+      padding:8px 12px;border-radius:999px;border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,.22);
+      font-size:12px;color:var(--muted);white-space:nowrap;
+      display:flex;align-items:center;gap:8px;
+    }
+    .chip b{color:var(--text);font-weight:900}
+
+    .layout{display:grid;grid-template-columns: 1.35fr .65fr;gap:12px;align-items:start;}
+    @media (max-width: 980px){ .layout{grid-template-columns:1fr} .chipRow{justify-content:flex-start} }
+    @media (max-width: 520px){
+      .header{flex-direction:column;align-items:flex-start}
+      .brandBox img{width:95px}
+      .cardBody{padding:12px}
+      .cardHead{padding:12px}
+    }
+
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input, select, button{font-family:inherit}
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      outline:none;
+      color:var(--text);
+      background: rgba(0,0,0,.22);
+      transition:.15s;
+      min-width:0;
+    }
+    input:focus, select:focus{border-color: rgba(96,165,250,.65);box-shadow:0 0 0 4px rgba(96,165,250,.16)}
+    input::placeholder{color:rgba(229,231,235,.55)}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    @media (max-width: 600px){ .grid{grid-template-columns:1fr} }
+
+    .btn{
+      border:0;padding:12px 14px;border-radius:14px;cursor:pointer;
+      font-weight:950;font-size:14px;transition:.15s;
+      display:inline-flex;align-items:center;gap:8px;user-select:none;
+      min-width:0; white-space:nowrap;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btnBlue{background: rgba(96,165,250,.18); color: var(--text); border:1px solid rgba(96,165,250,.25);}
+    .btnGreen{background: linear-gradient(180deg, rgba(52,211,153,.95), rgba(16,185,129,.9)); color:#062014;}
+    .btnDanger{background: rgba(251,113,133,.18); color: var(--text); border:1px solid rgba(251,113,133,.28); padding:10px 12px; border-radius:12px; font-weight:950;}
+    .iconBtn{border:1px solid rgba(255,255,255,.14);background: rgba(255,255,255,.06);color: var(--text);border-radius:10px;padding:6px 10px;cursor:pointer;font-weight:900;}
+    .iconBtn.d{border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.14);}
+
+    .tableWrap{margin-top:14px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background: rgba(0,0,0,.18);}
+    .tableScroll{overflow-x:hidden;}
+    table{width:100%;border-collapse:separate;border-spacing:0;min-width:0;}
+    thead th{
+      text-align:left;font-size:12px;color:rgba(229,231,235,.85);
+      background: rgba(255,255,255,.06);
+      border-bottom:1px solid var(--line);
+      padding:10px 12px;
+      position:sticky;top:0;
+    }
+    tbody td{border-bottom:1px solid rgba(255,255,255,.06);padding:10px 12px;vertical-align:middle;}
+    tbody tr:last-child td{border-bottom:0}
+    .tdInput input{padding:12px 12px;border-radius:12px;font-size:14px}
+    .right{text-align:right}
+    .lt{font-weight:950;min-width:78px}
+    .lt small{color:var(--muted);font-weight:800;margin-left:6px}
+    .hintSmall{font-size:11px;color:rgba(229,231,235,.55);margin-top:6px}
+
+    @media (max-width: 520px){
+      .tableWrap{background: transparent; border:0}
+      thead{display:none;}
+      tbody tr{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap:10px;
+        padding:12px;
+        margin:10px 0;
+        border:1px solid var(--line);
+        border-radius:16px;
+        background: rgba(0,0,0,.18);
+      }
+      tbody td{border:0;padding:0}
+      tbody td:nth-child(1){ grid-column: 1 / 3; }
+      tbody td:nth-child(2){ grid-column: 1 / 2; }
+      tbody td:nth-child(3){ grid-column: 2 / 3; }
+      tbody td:nth-child(4){ grid-column: 1 / 2; align-self:center; text-align:left; }
+      tbody td:nth-child(5){ grid-column: 2 / 3; justify-self:end; align-self:center; }
+      .lt{font-size:16px}
+    }
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center;justify-content:space-between;}
+    @media (max-width: 520px){
+      .btnRow{flex-direction:column;align-items:stretch}
+      .btnRow button{width:100%;justify-content:center}
+      .btnRow .leftBtns{width:100%}
+      .btnRow .rightBtns{width:100%}
+      .btnRow .rightBtns button{flex:1}
+    }
+
+    .summary{position:sticky;top:12px}
+    @media (max-width: 980px){ .summary{position:static} }
+    .sumBox{padding:16px;display:flex;flex-direction:column;gap:12px}
+    @media (max-width:520px){ .sumBox{padding:12px} }
+    .kpiCard{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.20);
+      border-radius:16px;padding:12px 12px;
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+    }
+    .kpiCard .lab{color:var(--muted);font-size:12px}
+    .kpiCard .val{font-size:18px;font-weight:950}
+    .kpiCard .val span{font-size:12px;color:var(--muted);font-weight:800;margin-left:6px}
+    .divider{height:1px;background:rgba(255,255,255,.08);margin:2px 0}
+
+    .list{border:1px solid var(--line);border-radius:16px;background: rgba(0,0,0,.18);overflow:hidden;}
+    .listHead{
+      padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:12px;color:rgba(229,231,235,.85);background: rgba(255,255,255,.06);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+    }
+    .listBody{max-height:240px; overflow:auto}
+    .listRow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);}
+    .listRow:last-child{border-bottom:0}
+    .itemName{font-weight:900}
+    .priceTag{color:rgba(229,231,235,.85); font-weight:900}
+    .rowBtns{display:flex;gap:8px;flex-wrap:wrap}
+
+    .managerGrid2{
+      display:grid;
+      grid-template-columns: 1fr 140px 140px;
+      gap:10px;
+      align-items:end;
+      width:100%;
+    }
+    @media (max-width:520px){
+      .managerGrid2{grid-template-columns:1fr; align-items:stretch;}
+      .managerGrid2 button{width:100%;justify-content:center}
+    }
+
+    /* ---------- Receipt Overlay (same page) ---------- */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:12px;
+      z-index:9999;
+    }
+    .overlay.show{display:flex}
+    .modal{
+      width:min(560px, 100%);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:18px;
+      background: rgba(10,15,26,.92);
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding:12px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .modalHead b{font-size:14px}
+    .modalBody{padding:12px}
+    .modalBtns{display:flex;gap:10px;flex-wrap:wrap}
+    .modalBtns .btn{flex:1}
+    @media (max-width:520px){ .modalBtns .btn{flex:unset;width:100%;justify-content:center} }
+    .status{margin-top:10px;font-size:12px;color:rgba(229,231,235,.75);text-align:center}
+
+    /* ✅ capture wrapper: this is what we export to PNG */
+    .captureArea{
+      background:#ffffff;
+      border-radius:14px;
+      padding:14px;           /* ✅ margin inside */
+      border:2px solid #111;  /* ✅ visible edge */
+      display:inline-block;
+    }
+
+    .receiptWrap{
+      margin-top:12px;
+      overflow:auto;
+      max-height: 65vh;
+      display:flex;
+      justify-content:center;
+      padding:10px; /* modal padding for preview */
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+    }
+
+    .receipt{
+      font-family: Arial, sans-serif;
+      width: 72mm;
+      color:#000;
+      margin:0 auto;
+    }
+    .receipt .center{text-align:center}
+    .receipt hr{border:0;border-top:1px dashed #000;margin:8px 0}
+
+    /* ✅ FIX: Receipt table header visible */
+    .receipt table{width:100%;border-collapse:collapse;font-size:12px;min-width:auto}
+    .receipt thead th{
+      color:#000 !important;
+      font-weight:700;
+      border-bottom:1px solid #000;
+      padding:4px 0;
+      background: transparent;
+    }
+    .receipt td{padding:4px 0;color:#000}
+    .receipt .r{text-align:right}
+    .receipt .big{font-size:14px;font-weight:700}
+    .receipt .muted{font-size:11px;color:#000}
+    .receipt .note{font-size:11px;text-align:center;margin-top:8px;color:#000}
+    .receipt img{max-width:170px;height:auto;margin-bottom:6px}
+
+    /* Print only receipt */
+    @media print{
+      body{background:#fff!important}
+      .wrap{display:none!important}
+      .overlay{display:none!important}
+      #printArea{display:block!important}
+      @page { size: 80mm auto; margin: 4mm; }
+    }
+    #printArea{display:none}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="brandBox">
+        <img id="brandLogo" src="logo_mark.png" alt="Logo">
+        <div class="brandText">
+          <h1>SACHI Sweet and Foods</h1>
+          <p class="sub">HTML Only Billing (No Server)</p>
+        </div>
+      </div>
+      <div class="chipRow">
+        <div class="chip">No Server ✅</div>
+        <div class="chip">Mobile ✅</div>
+        <div class="chip">PNG ✅</div>
+      </div>
+    </div>
+
+    <div class="layout">
+
+      <!-- LEFT -->
+      <div class="card">
+        <div class="cardHead">
+          <div class="left">
+            <b>Bill Details</b>
+            <span>Fill, add items, then Print / PNG.</span>
+          </div>
+          <div class="chip">Example: <b>SACHI-0001</b></div>
+        </div>
+
+        <div class="cardBody">
+          <form onsubmit="return false;">
+            <div class="grid">
+              <div>
+                <label>Date</label>
+                <input type="date" id="bill_date" required>
+              </div>
+
+              <div>
+                <label>Bill No</label>
+                <input type="text" id="bill_no" placeholder="SACHI-0001" required>
+              </div>
+
+              <div>
+                <label>Payment Method</label>
+                <select id="pay_method">
+                  <option>Cash</option>
+                  <option>Card</option>
+                  <option>Transfer</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Paid Amount (LKR)</label>
+                <input type="number" id="paid" value="0" min="0" step="1" placeholder="0">
+              </div>
+            </div>
+
+            <datalist id="commonItems"></datalist>
+
+            <div class="tableWrap">
+              <div class="tableScroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Item</th><th>Qty</th><th>Price</th><th class="right">Line Total</th><th class="right">Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody id="itemsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="btnRow">
+              <div class="leftBtns" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                <button type="button" class="btn btnBlue" onclick="addRow()">＋ Add Item</button>
+              </div>
+
+              <div class="rightBtns" style="display:flex;gap:10px;flex-wrap:wrap">
+                <button type="button" class="btn btnBlue" onclick="openReceiptModal()">🧾 Open Receipt</button>
+                <button type="button" class="btn btnGreen" onclick="openReceiptModal()">🖨 Print / PNG</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="card summary">
+        <div class="cardHead">
+          <div class="left">
+            <b>Live Summary</b>
+            <span>Subtotal preview realtime</span>
+          </div>
+          <div class="chip">LKR</div>
+        </div>
+
+        <div class="sumBox">
+          <div class="kpiCard">
+            <div><div class="lab">Rows</div><div class="lab">Table rows</div></div>
+            <div class="val" id="kpiRows">0 <span>rows</span></div>
+          </div>
+
+          <div class="kpiCard">
+            <div><div class="lab">Subtotal</div><div class="lab">Sum</div></div>
+            <div class="val" id="kpiSubtotal">0 <span>LKR</span></div>
+          </div>
+
+          <div class="kpiCard">
+            <div><div class="lab">Paid</div><div class="lab">Entered</div></div>
+            <div class="val" id="kpiPaid">0 <span>LKR</span></div>
+          </div>
+
+          <div class="kpiCard" id="diffCard">
+            <div><div class="lab" id="kpiDiffLabel">Balance Due</div><div class="lab">Auto calc</div></div>
+            <div class="val" id="kpiDiff">0 <span>LKR</span></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="card" style="box-shadow:none;background:rgba(0,0,0,.14);border-radius:16px;border:1px solid var(--line);overflow:hidden">
+            <div class="cardHead" style="border-bottom:1px solid var(--line);">
+              <div class="left">
+                <b>Item Manager</b>
+                <span>Dropdown items + prices</span>
+              </div>
+              <button class="iconBtn" type="button" onclick="resetItems()">Reset</button>
+            </div>
+
+            <div class="cardBody" style="padding:10px;">
+              <div class="managerGrid2">
+                <div>
+                  <label>Item Name</label>
+                  <input id="newItemName" placeholder="Eg:Ice Coffee">
+                </div>
+                <div>
+                  <label>Price</label>
+                  <input id="newItemPrice" type="number" min="0" step="1" placeholder="250">
+                </div>
+                <div>
+                  <button type="button" class="btn btnBlue" style="width:60%;justify-content:center;" onclick="addItemToList()">＋ Add</button>
+                </div>
+              </div>
+
+              <div class="list" style="margin-top:10px;">
+                <div class="listHead">
+                  <span>Saved Items</span>
+                  <span class="lab">(Edit/Del)</span>
+                </div>
+                <div class="listBody" id="itemsList"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="lab" style="color:var(--muted);font-size:12px;line-height:1.45">
+            Keyboard: Enter = next field<br>
+            Last row Price Enter => auto new row
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Receipt overlay/modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <div class="modalHead">
+        <b>Receipt Preview</b>
+        <button class="iconBtn d" type="button" onclick="closeReceiptModal()">Close</button>
+      </div>
+      <div class="modalBody">
+        <div class="modalBtns">
+          <button class="btn btnGreen" type="button" onclick="printReceipt()">🖨 Print</button>
+          <button class="btn btnBlue" id="dlBtn" type="button" onclick="downloadPNG()">⬇ Download PNG</button>
+          <button class="btn btnBlue" type="button" onclick="pickLogo()">🖼 Load Logo</button>
+        </div>
+
+        <input id="logoFile" type="file" accept="image/*" style="display:none">
+        <div class="status" id="status">Tip: PNG download 100% work වෙන්න Load Logo එකෙන් logo එක 한번 select කරන්න ✅</div>
+
+        <div class="receiptWrap">
+          <!-- ✅ capture wrapper will be inside here -->
+          <div id="receiptHost"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print-only area -->
+  <div id="printArea"></div>
+
+  <!-- Offline html2canvas -->
+  <script src="html2canvas.min.js"></script>
+
+  <script>
+    const SHOP_NAME = "SACHI Sweet and Foods";
+    const STORAGE_KEY_ITEMS = "sachi_items_html_v6";
+    const STORAGE_KEY_LOGO  = "sachi_logo_dataurl_v2";
+
+    const DEFAULT_ITEMS = [
+      {name:"Milk Toffee", price: 50},
+      {name:"Watalappan", price: 200},
+      {name:"Cake Piece", price: 180},
+      {name:"Cup Cake", price: 150},
+      {name:"Samosa", price: 80},
+      {name:"Fish Bun", price: 120},
+      {name:"Egg Bun", price: 130},
+      {name:"Roll", price: 100},
+      {name:"Faluda", price: 280},
+      {name:"Ice Coffee", price: 250},
+    ];
+
+    document.getElementById("bill_date").valueAsDate = new Date();
+    const money = (n) => (isNaN(n) ? 0 : Math.round(n));
+
+    function setStatus(msg){ document.getElementById("status").textContent = msg; }
+
+    // ---------- LOGO (base64) ----------
+    let LOGO_DATAURL = localStorage.getItem(STORAGE_KEY_LOGO) || "";
+
+    function applyLogoToUI(){
+      if(!LOGO_DATAURL) return;
+      const brand = document.getElementById("brandLogo");
+      if(brand) brand.src = LOGO_DATAURL;
+    }
+
+    function pickLogo(){ document.getElementById("logoFile").click(); }
+
+    document.getElementById("logoFile").addEventListener("change", function(){
+      const file = this.files && this.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e){
+        LOGO_DATAURL = e.target.result;
+        localStorage.setItem(STORAGE_KEY_LOGO, LOGO_DATAURL);
+        applyLogoToUI();
+        if(document.getElementById("overlay").classList.contains("show")){
+          openReceiptModal(true);
+        }
+        alert("Logo loaded ✅ දැන් PNG Download වැඩ කරනවා.");
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ---------- ITEMS storage ----------
+    function loadItems(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY_ITEMS);
+        if(!raw) return [...DEFAULT_ITEMS];
+        const parsed = JSON.parse(raw);
+        if(!Array.isArray(parsed)) return [...DEFAULT_ITEMS];
+        return parsed.filter(x => x && typeof x.name === "string");
+      }catch(e){ return [...DEFAULT_ITEMS]; }
+    }
+    function saveItems(items){ localStorage.setItem(STORAGE_KEY_ITEMS, JSON.stringify(items)); }
+    function normalizeName(s){ return (s||"").trim().replace(/\s+/g," "); }
+
+    let ITEMS = loadItems();
+
+    function rebuildDatalist(){
+      const dl = document.getElementById("commonItems");
+      dl.innerHTML = "";
+      ITEMS.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(it=>{
+        const op = document.createElement("option");
+        op.value = it.name;
+        dl.appendChild(op);
+      });
+    }
+
+    function rebuildManagerList(){
+      const box = document.getElementById("itemsList");
+      box.innerHTML = "";
+      const sorted = ITEMS.slice().sort((a,b)=>a.name.localeCompare(b.name));
+      if(sorted.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "listRow";
+        empty.innerHTML = `<div class="lab">No items saved.</div>`;
+        box.appendChild(empty);
+        return;
+      }
+      sorted.forEach(it=>{
+        const row = document.createElement("div");
+        row.className = "listRow";
+        row.innerHTML = `
+          <div>
+            <div class="itemName">${it.name}</div>
+            <div class="lab">Price: <span class="priceTag">${it.price ?? 0} LKR</span></div>
+          </div>
+          <div class="rowBtns">
+            <button class="iconBtn" type="button" onclick='editItem("${encodeURIComponent(it.name)}")'>Edit</button>
+            <button class="iconBtn d" type="button" onclick='deleteItem("${encodeURIComponent(it.name)}")'>Del</button>
+          </div>
+        `;
+        box.appendChild(row);
+      });
+    }
+
+    function getPriceByName(name){
+      const n = normalizeName(name);
+      const found = ITEMS.find(x => normalizeName(x.name).toLowerCase() === n.toLowerCase());
+      return found ? Number(found.price || 0) : null;
+    }
+
+    function addItemToList(){
+      const name = normalizeName(document.getElementById("newItemName").value);
+      const price = Math.max(0, parseInt(document.getElementById("newItemPrice").value || "0", 10));
+      if(name === ""){ alert("Item name දාන්න"); return; }
+
+      const idx = ITEMS.findIndex(x => normalizeName(x.name).toLowerCase() === name.toLowerCase());
+      if(idx >= 0) ITEMS[idx].price = price;
+      else ITEMS.push({name, price});
+
+      saveItems(ITEMS);
+      rebuildDatalist();
+      rebuildManagerList();
+
+      document.getElementById("newItemName").value = "";
+      document.getElementById("newItemPrice").value = "";
+      document.getElementById("newItemName").focus();
+    }
+
+    function editItem(encodedName){
+      const name = decodeURIComponent(encodedName);
+      const it = ITEMS.find(x => normalizeName(x.name).toLowerCase() === normalizeName(name).toLowerCase());
+      if(!it) return;
+      const newPrice = prompt(`Update price for: ${it.name}`, String(it.price ?? 0));
+      if(newPrice === null) return;
+      it.price = Math.max(0, parseInt(newPrice || "0", 10));
+
+      saveItems(ITEMS);
+      rebuildDatalist();
+      rebuildManagerList();
+      applyAutoPriceToAllRows();
+      calcAll();
+    }
+
+    function deleteItem(encodedName){
+      const name = decodeURIComponent(encodedName);
+      if(!confirm(`Delete item: ${name} ?`)) return;
+      ITEMS = ITEMS.filter(x => normalizeName(x.name).toLowerCase() !== normalizeName(name).toLowerCase());
+      saveItems(ITEMS);
+      rebuildDatalist();
+      rebuildManagerList();
+    }
+
+    function resetItems(){
+      if(!confirm("Reset items to default list?")) return;
+      ITEMS = [...DEFAULT_ITEMS];
+      saveItems(ITEMS);
+      rebuildDatalist();
+      rebuildManagerList();
+      applyAutoPriceToAllRows();
+      calcAll();
+    }
+
+    window.addItemToList = addItemToList;
+    window.editItem = editItem;
+    window.deleteItem = deleteItem;
+    window.resetItems = resetItems;
+    window.pickLogo = pickLogo;
+
+    // ---------- Billing table ----------
+    const body = document.getElementById("itemsBody");
+    function rows(){ return Array.from(body.querySelectorAll("tr")); }
+
+    function makeRow(prefill={}){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="tdInput">
+          <label style="margin:0 0 6px;color:rgba(229,231,235,.7);font-size:12px;">Item</label>
+          <input class="item" list="commonItems" placeholder="Select / Type item" required value="${prefill.item ?? ''}">
+          <div class="hintSmall">Select -> price auto-fill</div>
+        </td>
+
+        <td class="tdInput">
+          <label style="margin:0 0 6px;color:rgba(229,231,235,.7);font-size:12px;">Qty</label>
+          <input class="qty" type="number" min="1" value="${prefill.qty ?? 1}" required>
+        </td>
+
+        <td class="tdInput">
+          <label style="margin:0 0 6px;color:rgba(229,231,235,.7);font-size:12px;">Price</label>
+          <input class="price" type="number" min="0" value="${prefill.price ?? 0}" required>
+        </td>
+
+        <td class="right lt">
+          <label style="margin:0 0 6px;color:rgba(229,231,235,.7);font-size:12px;text-align:left;display:block;">Line Total</label>
+          <span class="lineTotal">0</span> <small>LKR</small>
+        </td>
+
+        <td class="right">
+          <label style="margin:0 0 6px;color:rgba(229,231,235,.7);font-size:12px;display:block;">Remove</label>
+          <button type="button" class="btnDanger">✕</button>
+        </td>
+      `;
+
+      tr.querySelector(".btnDanger").onclick = () => removeRow(tr);
+
+      const item = tr.querySelector(".item");
+      const qty  = tr.querySelector(".qty");
+      const price= tr.querySelector(".price");
+
+      item.addEventListener("change", ()=>{ applyAutoPrice(tr); calcAll(); });
+      item.addEventListener("blur",  ()=>{ applyAutoPrice(tr); calcAll(); });
+      qty.addEventListener("input", calcAll);
+      price.addEventListener("input", calcAll);
+
+      tr.querySelectorAll("input").forEach(inp=>{
+        inp.addEventListener("keydown", onEnterJump);
+      });
+
+      return tr;
+    }
+
+    function addRow(prefill={}){
+      const tr = makeRow(prefill);
+      body.appendChild(tr);
+      calcAll();
+      tr.querySelector(".item").focus();
+    }
+    window.addRow = addRow;
+
+    function removeRow(tr){
+      if(rows().length <= 1) return;
+      tr.remove();
+      calcAll();
+    }
+
+    function applyAutoPrice(tr){
+      const itemName = tr.querySelector(".item").value;
+      const p = getPriceByName(itemName);
+      if(p !== null) tr.querySelector(".price").value = p;
+    }
+    function applyAutoPriceToAllRows(){ rows().forEach(tr => applyAutoPrice(tr)); }
+
+    function calcRow(tr){
+      const q = parseFloat(tr.querySelector(".qty").value || 0);
+      const p = parseFloat(tr.querySelector(".price").value || 0);
+      const total = money(q * p);
+      tr.querySelector(".lineTotal").textContent = total;
+      return total;
+    }
+
+    function calcAll(){
+      const trs = rows();
+      let subtotal = 0;
+      trs.forEach(tr => subtotal += calcRow(tr));
+
+      const paid = money(parseFloat(document.getElementById("paid").value || 0));
+      const diff = paid - subtotal;
+
+      document.getElementById("kpiRows").innerHTML = `${trs.length} <span>rows</span>`;
+      document.getElementById("kpiSubtotal").innerHTML = `${subtotal} <span>LKR</span>`;
+      document.getElementById("kpiPaid").innerHTML = `${paid} <span>LKR</span>`;
+
+      const label = document.getElementById("kpiDiffLabel");
+      const diffBox = document.getElementById("kpiDiff");
+      const diffCard = document.getElementById("diffCard");
+
+      if(diff >= 0){
+        label.textContent = "Change";
+        diffBox.innerHTML = `${Math.abs(diff)} <span>LKR</span>`;
+        diffCard.style.borderColor = "rgba(52,211,153,.35)";
+      }else{
+        label.textContent = "Balance Due";
+        diffBox.innerHTML = `${Math.abs(diff)} <span>LKR</span>`;
+        diffCard.style.borderColor = "rgba(251,113,133,.35)";
+      }
+    }
+
+    function getInputsInOrder(){
+      const base = [
+        document.getElementById("bill_date"),
+        document.getElementById("bill_no"),
+        document.getElementById("pay_method"),
+        document.getElementById("paid"),
+      ];
+      const t = [];
+      rows().forEach(r=>{
+        t.push(r.querySelector(".item"));
+        t.push(r.querySelector(".qty"));
+        t.push(r.querySelector(".price"));
+      });
+      return [...base, ...t].filter(Boolean);
+    }
+    function focusNext(current){
+      const list = getInputsInOrder();
+      const i = list.indexOf(current);
+      if(i >= 0 && i < list.length - 1){
+        list[i+1].focus();
+        if(list[i+1].select) list[i+1].select();
+      }
+    }
+    function onEnterJump(e){
+      if(e.key !== "Enter") return;
+      const el = e.target;
+      e.preventDefault();
+
+      if(el.classList.contains("price")){
+        const trs = rows();
+        const tr = el.closest("tr");
+        const isLast = trs[trs.length - 1] === tr;
+        if(isLast){ addRow(); return; }
+      }
+      focusNext(el);
+    }
+
+    ["bill_date","bill_no","pay_method","paid"].forEach(id=>{
+      document.getElementById(id).addEventListener("keydown", onEnterJump);
+    });
+    document.getElementById("paid").addEventListener("input", calcAll);
+
+    // ---------- Receipt ----------
+    function escapeHtml(s){
+      return String(s ?? "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[m]));
+    }
+
+    function collectData(){
+      const data = {
+        bill_date: document.getElementById("bill_date").value,
+        bill_no: document.getElementById("bill_no").value.trim(),
+        pay_method: document.getElementById("pay_method").value,
+        paid: money(parseFloat(document.getElementById("paid").value || 0)),
+        items: rows().map(r=>({
+          name: (r.querySelector(".item").value || "").trim(),
+          qty:  money(parseFloat(r.querySelector(".qty").value || 0)),
+          price:money(parseFloat(r.querySelector(".price").value || 0)),
+        })).filter(x=>x.name !== "" && x.qty > 0),
+      };
+      data.subtotal = data.items.reduce((s,x)=>s + money(x.qty*x.price), 0);
+      data.total = data.subtotal;
+      data.diff = data.paid - data.total;
+      return data;
+    }
+
+    function receiptInnerHTML(d){
+      const rowsHtml = d.items.length
+        ? d.items.map(x=>`
+            <tr>
+              <td>${escapeHtml(x.name)}</td>
+              <td class="r">${x.qty}</td>
+              <td class="r">${x.price}</td>
+              <td class="r">${money(x.qty*x.price)}</td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="4" class="center muted">No items</td></tr>`;
+
+      const diffLabel = d.diff >= 0 ? "Change" : "Balance Due";
+      const bill = (d.bill_no || "SACHI-BILL");
+      const logoSrc = LOGO_DATAURL || "logo_mark.png";
+
+      return `
+        <div class="receipt">
+          <div class="center">
+            <img src="${logoSrc}" alt="Logo">
+            <div class="muted">${SHOP_NAME}</div>
+          </div>
+          <hr>
+          <div class="muted">
+            Date: ${escapeHtml(d.bill_date)}<br>
+            Bill No: ${escapeHtml(bill)}
+          </div>
+          <hr>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th class="r">Qty</th>
+                <th class="r">Price</th>
+                <th class="r">Total</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+
+          <hr>
+
+          <table>
+            <tr><td>Subtotal</td><td class="r">${d.subtotal}</td></tr>
+            <tr><td class="big">Total (LKR)</td><td class="r big">${d.total}</td></tr>
+            <tr><td>Paid</td><td class="r">${d.paid}</td></tr>
+            <tr><td>${diffLabel}</td><td class="r">${Math.abs(d.diff)}</td></tr>
+          </table>
+
+          <hr>
+
+          <div class="center muted">Payment: ${escapeHtml(d.pay_method)}</div>
+          <div class="note">Thank you for ordering!<br>${SHOP_NAME}</div>
+        </div>
+      `;
+    }
+
+    function openReceiptModal(quiet=false){
+      const d = collectData();
+      if(!d.bill_date){ alert("Date fill කරන්න"); return; }
+
+      // ✅ wrap receipt inside captureArea (adds margin + prevents crop)
+      document.getElementById("receiptHost").innerHTML =
+        `<div id="captureArea" class="captureArea">${receiptInnerHTML(d)}</div>`;
+
+      document.getElementById("overlay").classList.add("show");
+      document.getElementById("printArea").innerHTML =
+        `<div class="captureArea">${receiptInnerHTML(d)}</div>`;
+
+      if(!LOGO_DATAURL && !quiet){
+        setStatus("PNG download 100% work වෙන්න 🖼 Load Logo එකෙන් logo එක 한번 select කරන්න ✅");
+      }else{
+        setStatus("Ready ✅");
+      }
+    }
+
+    function closeReceiptModal(){
+      document.getElementById("overlay").classList.remove("show");
+    }
+    window.openReceiptModal = openReceiptModal;
+    window.closeReceiptModal = closeReceiptModal;
+
+    async function downloadPNG(){
+      const btn = document.getElementById("dlBtn");
+      btn.disabled = true;
+      btn.textContent = "Creating PNG...";
+      setStatus("Generating PNG...");
+
+      if(!LOGO_DATAURL){
+        btn.disabled = false;
+        btn.textContent = "⬇ Download PNG";
+        setStatus("Please Load Logo first ✅");
+        alert("PNG download සඳහා 🖼 Load Logo click කරලා logo එක select කරන්න (එක වරක්).");
+        pickLogo();
+        return;
+      }
+
+      if(typeof window.html2canvas !== "function"){
+        setStatus("html2canvas not loaded. html2canvas.min.js same folder එකේද බලන්න.");
+        alert("html2canvas not loaded. html2canvas.min.js same folder එකට දාන්න.");
+        btn.disabled = false;
+        btn.textContent = "⬇ Download PNG";
+        return;
+      }
+
+      try{
+        await new Promise(r => setTimeout(r, 250));
+        const el = document.getElementById("captureArea"); // ✅ capture wrapper, not tight receipt
+        const canvas = await html2canvas(el, {
+          scale: 2,
+          backgroundColor: "#ffffff"
+        });
+
+        const d = collectData();
+        const safeName = (d.bill_no || "SACHI-BILL").replace(/[^a-z0-9_-]/gi,"_");
+        const dataUrl = canvas.toDataURL("image/png");
+
+        // try download
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = `${safeName}.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        // backup: open png
+        setStatus("PNG ready ✅ If download blocked: Open PNG → Save image");
+        const host = document.getElementById("receiptHost");
+        host.insertAdjacentHTML("afterbegin", `
+          <div style="text-align:center;margin-bottom:10px;">
+            <a class="btn btnBlue" href="${dataUrl}" target="_blank" rel="noopener">🖼 Open PNG</a>
+          </div>
+        `);
+      }catch(err){
+        console.log(err);
+        setStatus("PNG failed. Try Load Logo again.");
+        alert("PNG failed. Load Logo නැවත select කරලා try කරන්න.");
+      }finally{
+        btn.disabled = false;
+        btn.textContent = "⬇ Download PNG";
+      }
+    }
+    window.downloadPNG = downloadPNG;
+
+    function printReceipt(){ window.print(); }
+    window.printReceipt = printReceipt;
+
+    // ---------- init ----------
+    rebuildDatalist();
+    rebuildManagerList();
+    addRow();
+    calcAll();
+    applyLogoToUI();
+  </script>
+</body>
+</html>
